@@ -19,13 +19,11 @@ namespace Lab_1
             rawString = Console.ReadLine();
 
             string[] words = rawString.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries);
-            List<string> splitStrings = words.ToList();
-            splitStrings.RemoveAt(1);
 
-            name = splitStrings[0];
-            work = splitStrings[1];
+            name = words[0];
+            work = words[2];
 
-            words = splitStrings[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            words = words[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             dateOfWork = DateTime.Parse(words[0]);
 
