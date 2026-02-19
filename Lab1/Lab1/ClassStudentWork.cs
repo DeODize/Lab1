@@ -15,7 +15,7 @@ namespace Lab_1
         public void DisplayInfo()
         {
             Console.WriteLine($"Студент: {Name}");
-            Console.WriteLine($"Название работы: \"{NameOfWork}\" ");
+            Console.WriteLine($"Название работы: {NameOfWork} ");
             Console.WriteLine($"Дата выдачи: {DateOfWork.ToShortDateString()}");
         }
         public ClassStudentWork(string name, string nameOfWork, DateTime date)
