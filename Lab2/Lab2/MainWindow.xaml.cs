@@ -69,6 +69,7 @@ namespace Lab2
             {
                 _currentFilePath = ParseFile.SaveDialog();
                 Title = $"Работы студентов - {_currentFilePath}";
+                _isFileLoaded = true;
             }
             if (!ParseFile.WriteFile(_currentFilePath, _works.ToList()))
             {

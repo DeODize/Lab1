@@ -17,7 +17,7 @@
             <Button x:Name="AddButton" Width="80" Click="AddButton_Click">Добавить</Button>
             <Button x:Name="RemoveButton" Width="80" Margin="8,0,0,0" Click="RemoveButton_Click">Удалить</Button>
         </StackPanel>
-        <DataGrid x:Name="WorksGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="False">
+        <DataGrid x:Name="WorksGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn Header="Название работы" Binding="{Binding NameOfWork}" Width="2*" />
