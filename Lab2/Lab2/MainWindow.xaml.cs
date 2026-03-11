@@ -15,131 +15,80 @@ namespace Lab2
 {
     public partial class MainWindow : Window
     {
-        private ObservableCollection<StudentWork> works = new();
+        private readonly System.Collections.ObjectModel.ObservableCollection<StudentWork> _works = new();
+        private string _currentFilePath;
+        private string _perviousFilePath;
+        private bool _isFileLoaded = false;
 
         public MainWindow()
         {
             InitializeComponent();
-            WorksDataGrid.ItemsSource = works;
+            WorksGrid.ItemsSource = _works;
         }
 
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-            dlg.CheckFileExists = false;
-            var result = dlg.ShowDialog(this);
-            if (result == true)
+            _currentFilePath = ParseFile.OpenDialog();
+            if (_currentFilePath != null)
             {
-                FilePathTextBox.Text = dlg.FileName;
-            }
-            var path = FilePathTextBox.Text.Trim();
-            try
-            {
-                works.Clear();
-                if (!System.IO.File.Exists(path))
+                var parsedObjects = ParseFile.ReadFile(_currentFilePath);
+                if (parsedObjects != null)
                 {
-                    ResultLabel.Content = "Файл не найден. Будет создан при добавлении строки.";
-                    return;
-                }
+                    if (!_isFileLoaded)
+                    {
+                        var _tempWorks = new List<StudentWork>(_works);
+                        _works.Clear();
+                        foreach (var obj in parsedObjects)
+                            _works.Add(obj);
+                        foreach (var obj in _tempWorks)
+                            _works.Add(obj);
+                        _isFileLoaded = true;
+                    }
+                    else
+                    {
+                        _works.Clear();
+                        foreach (var obj in parsedObjects)
+                            _works.Add(obj);
+                    }
 
-                foreach (var line in System.IO.File.ReadLines(path, Encoding.UTF8))
+                    Title = $"Работы студентов - {_currentFilePath}";
+                    _perviousFilePath = _currentFilePath;
+                }
+                else
                 {
-                    if (TryParseStudentWork(line, out var sw))
-                        works.Add(sw);
+                    MessageBox.Show(this, "Ошибка чтения файла", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    _currentFilePath = _perviousFilePath;
                 }
-
-                ResultLabel.Content = "Файл загружен.";
             }
-            catch (System.Exception ex)
-            {
-                ResultLabel.Content = "Ошибка: " + ex.Message;
-            }
+            else MessageBox.Show(this, "Файл не выбран", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-        private bool TryParseStudentWork(string raw, out StudentWork work)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            work = null;
-            if (string.IsNullOrWhiteSpace(raw)) return false;
-
-            try
+            if (_currentFilePath == null)
             {
-                var parts = raw.Split(new char[] { '"' }, StringSplitOptions.RemoveEmptyEntries)
-                               .Select(p => p.Trim())
-                               .Where(p => !string.IsNullOrEmpty(p))
-                               .ToArray();
-
-                if (parts.Length >= 3)
-                {
-                    var name = parts[0];
-                    var nameOfWork = parts[1];
-                    var dateStr = parts[2];
-                    if (!System.DateTime.TryParse(dateStr, out var dt)) dt = System.DateTime.MinValue;
-                    work = new StudentWork(name, nameOfWork, dt);
-                    return true;
-                }
-
-                return false;
+                _currentFilePath = ParseFile.SaveDialog();
+                Title = $"Работы студентов - {_currentFilePath}";
             }
-            catch
+            if (!ParseFile.WriteFile(_currentFilePath, _works.ToList()))
             {
-                return false;
+                MessageBox.Show(this, "Ошибка записи файла", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            if (works.Count == 0)
+            var win = new AddWorkWindow();
+            win.Owner = this;
+            if (win.ShowDialog() == true)
             {
-                ResultLabel.Content = "Сначала загрузите файл.";
-                return;
-            }
-
-            var dlg = new AddWorkWindow();
-            dlg.Owner = this;
-            if (dlg.ShowDialog() == true)
-            {
-                works.Add(dlg.Work);
-                ResultLabel.Content = "Элемент добавлен (не сохранено).";
+                _works.Add(win.Result);
             }
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            var path = FilePathTextBox.Text.Trim();
-            if (string.IsNullOrEmpty(path))
-            {
-                ResultLabel.Content = "Укажите путь к файлу.";
-                return;
-            }
-
-            try
-            {
-                using var sw = new System.IO.StreamWriter(path, append: false, encoding: Encoding.UTF8);
-                foreach (var w in works)
-                {
-                    sw.WriteLine(w.ToRawString());
-                }
-
-                ResultLabel.Content = "Сохранено в файл.";
-            }
-            catch (System.Exception ex)
-            {
-                ResultLabel.Content = "Ошибка: " + ex.Message;
-            }
-        }
-
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (WorksDataGrid.SelectedItem is StudentWork sel)
-            {
-                works.Remove(sel);
-                ResultLabel.Content = "Элемент удалён (не сохранено).";
-            }
-            else
-            {
-                ResultLabel.Content = "Выберите элемент для удаления.";
-            }
+            _works.Remove((StudentWork)WorksGrid.SelectedItem);
         }
     }
 }

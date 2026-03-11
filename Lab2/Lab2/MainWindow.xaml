@@ -5,33 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Работы студентов" Height="450" Width="800">
+    <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" MinHeight="94" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0">
-            <TextBox x:Name="FilePathTextBox" Width="340" Margin="0,0,10,0" IsReadOnly="True" />
-            <Button x:Name="BrowseButton" Content="Обзор..." Width="80" Margin="0,0,10,0" Click="BrowseButton_Click" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,8">
+            <Button x:Name="OpenButton" Width="80" Margin="0,0,8,0" Click="OpenButton_Click">Открыть</Button>
+            <Button x:Name="SaveButton" Width="80" Margin="0,0,8,0" Click="SaveButton_Click">Сохранить</Button>
+            <Button x:Name="AddButton" Width="80" Click="AddButton_Click">Добавить</Button>
+            <Button x:Name="RemoveButton" Width="80" Margin="8,0,0,0" Click="RemoveButton_Click">Удалить</Button>
         </StackPanel>
-
-        <DataGrid x:Name="WorksDataGrid" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid x:Name="WorksGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Студент" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn Header="Название работы" Binding="{Binding NameOfWork}" Width="2*" />
-                <DataGridTextColumn Header="Дата выдачи" Binding="{Binding DateOfWork, StringFormat=d}" Width="Auto" />
+                <DataGridTextColumn Header="Дата" Binding="{Binding DateOfWork, StringFormat=yyyy-MM-dd}" Width="120" />
             </DataGrid.Columns>
         </DataGrid>
-
-        <!-- Actions: add (open dialog), save (write to file), delete -->
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="10" HorizontalAlignment="Left" >
-            <Button x:Name="AddButton" Content="Добавить" Width="90" Click="AddButton_Click" />
-            <Button x:Name="SaveButton" Content="Сохранить" Width="90" Margin="6,0,0,0" Click="SaveButton_Click" />
-            <Button x:Name="DeleteButton" Content="Удалить" Width="90" Margin="6,0,0,0" Click="DeleteButton_Click" />
-            <Label x:Name="ResultLabel" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" />
-        </StackPanel>
     </Grid>
 </Window>
