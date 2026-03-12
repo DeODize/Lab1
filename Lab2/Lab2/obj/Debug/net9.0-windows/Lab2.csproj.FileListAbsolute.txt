@@ -43,3 +43,5 @@ C:\Users\dimok\source\repos\LabOOP\Lab2\Lab2\obj\Debug\net9.0-windows\refint\Lab
 C:\Users\dimok\source\repos\LabOOP\Lab2\Lab2\obj\Debug\net9.0-windows\Lab2.pdb
 C:\Users\dimok\source\repos\LabOOP\Lab2\Lab2\obj\Debug\net9.0-windows\Lab2.genruntimeconfig.cache
 C:\Users\dimok\source\repos\LabOOP\Lab2\Lab2\obj\Debug\net9.0-windows\ref\Lab2.dll
+C:\Users\dimok\source\repos\LabOOP\Lab2\Lab2\obj\Debug\net9.0-windows\Filter.g.cs
+C:\Users\dimok\source\repos\LabOOP\Lab2\Lab2\obj\Debug\net9.0-windows\Filter.baml

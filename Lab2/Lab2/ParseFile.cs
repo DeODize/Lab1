@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,5 +84,18 @@ namespace Lab2
                 return null;
             }
         }
+
+        public static ObservableCollection<StudentWork> Filter(List<StudentWork> works, string filter)
+        {
+            ObservableCollection<StudentWork> filteredWorks = new ObservableCollection<StudentWork>();
+            foreach (StudentWork studentWork in works)
+            {    
+                if (studentWork.ToRawString().Contains(filter))
+                    filteredWorks.Add(studentWork);
+            }
+            return filteredWorks;
+        }
+
+
     }
 }
