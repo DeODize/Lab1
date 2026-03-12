@@ -24,6 +24,9 @@ namespace Lab2
         {
             InitializeComponent();
             WorksGrid.ItemsSource = _works;
+            Filter filter = new Filter();
+            filter.Show();
+            //filter.Owner = this;
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -53,6 +56,7 @@ namespace Lab2
 
                     Title = $"Работы студентов - {_currentFilePath}";
                     _perviousFilePath = _currentFilePath;
+                    WorksGrid.ItemsSource = _works;
                 }
                 else
                 {

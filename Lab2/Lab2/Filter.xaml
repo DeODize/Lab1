@@ -1,0 +1,14 @@
+﻿<Window x:Class="Lab2.Filter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab2"
+        mc:Ignorable="d"
+        Title="Filter" Height="255" Width="745">
+    <Grid Margin="0,0,10,9">
+        <Button Content="Выбрать" HorizontalAlignment="Left" Margin="420,49,0,0" VerticalAlignment="Top" Height="28" Width="175" Click="Filter_Click"/>
+        <TextBox x:Name ="FilterBox" HorizontalAlignment="Left" Margin="90,49,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="278" Height="28" FontSize="16"/>
+
+    </Grid>
+</Window>
