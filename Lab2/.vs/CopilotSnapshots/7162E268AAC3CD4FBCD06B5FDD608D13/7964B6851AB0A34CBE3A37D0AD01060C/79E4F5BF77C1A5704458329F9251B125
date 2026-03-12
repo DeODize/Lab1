@@ -1,0 +1,125 @@
+﻿using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace Lab2
+{
+    public partial class MainWindow : Window
+    {
+        private List<StudentWork> Works = new();
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            WorksDataGrid.ItemsSource = Works;
+        }
+
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            dlg.CheckFileExists = true;
+            var result = dlg.ShowDialog(this);
+            if (result == true)
+            {
+                FilePathTextBox.Text = dlg.FileName;
+            }
+            var path = FilePathTextBox.Text.Trim();
+            List<StudentWork> works = new List<StudentWork>();
+            try
+            {
+                if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path))
+                {
+                    ResultLabel.Content = "Укажите существующий файл для загрузки.";
+                    return;
+                }
+
+                ParseFile parseFile = new ParseFile();
+                parseFile.ReadFile(path, out works);
+
+            }
+            catch (System.Exception ex)
+            {
+                ResultLabel.Content = "Ошибка: " + ex.Message;
+            }
+            // Replace current list with parsed works
+            Works.Clear();
+            Works.AddRange(works);
+            WorksDataGrid.ItemsSource = null;
+            WorksDataGrid.ItemsSource = Works;
+        }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new AddWorkWindow();
+            dlg.Owner = this;
+            if (dlg.ShowDialog() == true)
+            {
+                Works.Add(dlg.Work);
+                ResultLabel.Content = "Элемент добавлен (не сохранено).";
+            }
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var path = FilePathTextBox.Text.Trim();
+            if (string.IsNullOrEmpty(path))
+            {
+                var dlg = new Microsoft.Win32.SaveFileDialog();
+                dlg.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+                dlg.DefaultExt = ".txt";
+                var res = dlg.ShowDialog(this);
+                if (res == true)
+                {
+                    path = dlg.FileName;
+                    FilePathTextBox.Text = path;
+                }
+                else
+                {
+                    ResultLabel.Content = "Сохранение отменено.";
+                    return;
+                }
+            }
+
+            try
+            {
+                // Ensure the directory exists
+                var dir = System.IO.Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(dir) && !System.IO.Directory.Exists(dir))
+                    System.IO.Directory.CreateDirectory(dir);
+
+                using var sw = new System.IO.StreamWriter(path, append: false, encoding: Encoding.UTF8);
+                foreach (var w in Works)
+                    sw.WriteLine(w.ToRawString());
+                
+                ResultLabel.Content = "Сохранено в файл.";
+            }
+            catch (System.Exception ex)
+            {
+                ResultLabel.Content = "Ошибка: " + ex.Message;
+            }
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (WorksDataGrid.SelectedItem is StudentWork sel)
+            {
+                Works.Remove(sel);
+                ResultLabel.Content = "Элемент удалён (не сохранено).";
+            }
+            else
+            {
+                ResultLabel.Content = "Выберите элемент для удаления.";
+            }
+        }
+    }
+}

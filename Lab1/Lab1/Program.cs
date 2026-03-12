@@ -21,7 +21,6 @@ namespace Lab_1
             return result;
         }
 
-
         static void Main(string[] args)
         {
             string rawString, name, work;
@@ -42,9 +41,9 @@ namespace Lab_1
             name = trueString(list[0]);
             work = trueString(list[1]);
 
-            words = list[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string time = trueString(list[2]);
 
-            dateOfWork = DateTime.Parse(words[0]);
+            dateOfWork = DateTime.Parse(time);
 
             ClassStudentWork studentWork = new ClassStudentWork(name, work, dateOfWork);
             studentWork.DisplayInfo();
