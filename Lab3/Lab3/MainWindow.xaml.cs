@@ -8,14 +8,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Collections.ObjectModel;
-using System.Linq;
 
-namespace Lab2
+namespace Lab3
 {
     public partial class MainWindow : Window
     {
-        private readonly System.Collections.ObjectModel.ObservableCollection<StudentWork> _works = new();
+        private System.Collections.ObjectModel.ObservableCollection<StudentWork> _works = new();
         private string _currentFilePath;
         private string _perviousFilePath;
         private bool _isFileLoaded = false;
@@ -24,38 +22,22 @@ namespace Lab2
         {
             InitializeComponent();
             WorksGrid.ItemsSource = _works;
-            Filter filter = new Filter();
-            filter.Show();
+            //Filter filter = new Filter(_works);
+            //filter.Show();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
-            _currentFilePath = ParseFile.OpenDialog();
+            _currentFilePath = FileHandler.OpenDialog();
             if (_currentFilePath != null)
             {
-                var parsedObjects = ParseFile.ReadFile(_currentFilePath);
-                if (parsedObjects != null)
+                var parsedStrings = FileHandler.ReadFile(_currentFilePath);
+                var parsedObjects = ParseFile.FileParser(parsedStrings);
+                if (parsedObjects != null) 
                 {
-                    if (!_isFileLoaded)
-                    {
-                        var _tempWorks = new List<StudentWork>(_works);
-                        _works.Clear();
-                        foreach (var obj in parsedObjects)
-                            _works.Add(obj);
-                        foreach (var obj in _tempWorks)
-                            _works.Add(obj);
-                        _isFileLoaded = true;
-                    }
-                    else
-                    {
-                        _works.Clear();
-                        foreach (var obj in parsedObjects)
-                            _works.Add(obj);
-                    }
-
+                    ParseFile.LoadObjects(parsedObjects, ref _works, ref _isFileLoaded);
                     Title = $"Работы студентов - {_currentFilePath}";
                     _perviousFilePath = _currentFilePath;
-                    WorksGrid.ItemsSource = _works;
                 }
                 else
                 {
@@ -70,11 +52,11 @@ namespace Lab2
         {
             if (_currentFilePath == null)
             {
-                _currentFilePath = ParseFile.SaveDialog();
+                _currentFilePath = FileHandler.SaveDialog();
                 Title = $"Работы студентов - {_currentFilePath}";
                 _isFileLoaded = true;
             }
-            if (!ParseFile.WriteFile(_currentFilePath, _works.ToList()))
+            if (!FileHandler.WriteFile(_currentFilePath, _works.ToList()))
             {
                 MessageBox.Show(this, "Ошибка записи файла", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -89,7 +71,7 @@ namespace Lab2
                 _works.Add(win.Result);
             }
         }
-
+        
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             _works.Remove((StudentWork)WorksGrid.SelectedItem);

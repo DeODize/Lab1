@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace Lab3
+{
+    public partial class Filter : Window
+    {
+        private ObservableCollection<StudentWork> WorksForFilter { get; }
+        
+        public Filter(ObservableCollection<StudentWork> works)
+        {
+            InitializeComponent();
+            WorksForFilter = works;
+        }
+
+        private void Filter_Click(object sender, RoutedEventArgs e)
+        {
+            ((MainWindow)Application.Current.MainWindow).WorksGrid.ItemsSource = ParseFile.Filter(WorksForFilter, FilterBox.Text);
+        }
+    }
+}
+
