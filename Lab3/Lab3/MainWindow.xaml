@@ -8,22 +8,25 @@
         Title="Работы студентов" Height="594" Width="800">
     <Grid Margin="8">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="0.1*" />
+            <RowDefinition Height="0.75*" />
+            <RowDefinition Height="0.05*" />
+            <RowDefinition Height="0.25*" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,8">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,8" Grid.Row="0">
             <Button x:Name="OpenButton" Width="80" Margin="0,0,8,0" Click="OpenButton_Click">Открыть</Button>
             <Button x:Name="SaveButton" Width="80" Margin="0,0,8,0" Click="SaveButton_Click">Сохранить</Button>
             <Button x:Name="AddButton" Width="80" Click="AddButton_Click">Добавить</Button>
             <Button x:Name="RemoveButton" Width="80" Margin="8,0,0,0" Click="RemoveButton_Click">Удалить</Button>
         </StackPanel>
-        <DataGrid x:Name="WorksGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" Margin="0,10,0,141">
+        <DataGrid x:Name="WorksGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn Header="Название работы" Binding="{Binding NameOfWork}" Width="2*" />
                 <DataGridTextColumn Header="Дата" Binding="{Binding DateOfWork, StringFormat=yyyy-MM-dd}" Width="120" />
             </DataGrid.Columns>
         </DataGrid>
-        <TextBox x:Name="LogBox" Grid.Row="1"  Margin="0,398,0,0" />
+        <Label Content="Logs:" Grid.Row="2" FontSize="12" />
+        <TextBox x:Name="LogBox" Grid.Row="3" IsReadOnly="True"/>
     </Grid>
 </Window>

@@ -21,6 +21,16 @@ public sealed class Test1
         Assert.AreEqual(trueStudent.DateOfWork, student.DateOfWork);
     }
 
+    [DataTestMethod]
+    [DataRow("this is an invalid string")]
+    [DataRow("\"Bob\" \"Some work\" invalid date")]
+    [DataRow(null)]
+    public void ParseLineInvalidReturnsNull(string? rawString)
+    {
+        var result = Lab3.ParseFile.ParseLine(rawString);
+        Assert.IsNull(result);
+    }
+
     [TestMethod]
     public void StudentWorkParsingFromStrings()
     {
@@ -40,6 +50,24 @@ public sealed class Test1
         Assert.AreEqual(students[1].DateOfWork, secondStudent.DateOfWork);
         Assert.AreEqual(students[1].DateOfWork, secondStudent.DateOfWork);
         Assert.AreEqual(students[1].DateOfWork, secondStudent.DateOfWork);   
+    }
+
+    [TestMethod]
+    public void StudentWorkParsingErrorStrings()
+    {
+        string[] rawStrings = { "\"Bob\" \"Some work\" 2012-12-12", "  heheh" , "  \"Jill\"      \"Forest camp\"             2023-02-14" , "    ", " asdasdasd"};
+        List<StudentWork> students = Lab3.ParseFile.FileParser(rawStrings);
+        List<StudentWork> trueStudents = new List<StudentWork>();
+
+        trueStudents.Add(new StudentWork("Bob", "Some work", DateTime.Parse("2012-12-12")));
+        trueStudents.Add(new StudentWork("Jill", "Forest camp", DateTime.Parse("2023-02-14")));
+
+        for (int i = 0; i < students.Count; i++)
+        {
+            Assert.AreEqual(trueStudents[i].Name, students[i].Name);
+            Assert.AreEqual(trueStudents[i].NameOfWork, students[i].NameOfWork);
+            Assert.AreEqual(trueStudents[i].DateOfWork, students[i].DateOfWork);
+        }
     }
 
     [TestMethod]
@@ -147,5 +175,17 @@ public sealed class Test1
             Assert.AreEqual(trueStudentWorks[i].NameOfWork, studentWorks1[i].NameOfWork);
             Assert.AreEqual(trueStudentWorks[i].DateOfWork, studentWorks1[i].DateOfWork);
         }
+    }
+
+    [TestMethod]
+    public void FilterNoMatchesReturnsEmptyCollection()
+    {
+        ObservableCollection<StudentWork> studentWorks = new();
+        studentWorks.Add(new StudentWork("Bob", "Some work", DateTime.Parse("2012-12-12")));
+        studentWorks.Add(new StudentWork("Jill", "Forest camp", DateTime.Parse("2023-02-14")));
+
+        var filtered = ParseFile.Filter(studentWorks, "Alice");
+        Assert.IsNotNull(filtered);
+        Assert.AreEqual(0, filtered.Count);
     }
 }

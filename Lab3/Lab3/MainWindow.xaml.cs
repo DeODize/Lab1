@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.ObjectModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,8 +23,28 @@ namespace Lab3
         {
             InitializeComponent();
             WorksGrid.ItemsSource = _works;
+            Logger.Init("log.txt", WriteLog);
             //Filter filter = new Filter(_works);
+            //filter.OnGrid += Filter_OnGrid;
             //filter.Show();
+        }
+
+        private void Filter_OnGrid(ObservableCollection<StudentWork> filteredWorks)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                WorksGrid.ItemsSource = filteredWorks;
+            });
+        }
+
+
+        private void WriteLog(string message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                LogBox.AppendText(message + Environment.NewLine);
+                LogBox.ScrollToEnd();
+            });
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -31,9 +52,16 @@ namespace Lab3
             _currentFilePath = FileHandler.OpenDialog();
             if (_currentFilePath != null)
             {
+                Logger.Info($"Открыт файл: {_currentFilePath}");
                 var parsedStrings = FileHandler.ReadFile(_currentFilePath);
+                if (parsedStrings == null)
+                {
+                    Logger.Error("Ошибка чтения файла");
+                    return;
+                }
+
                 var parsedObjects = ParseFile.FileParser(parsedStrings);
-                if (parsedObjects != null) 
+                if (parsedObjects != null)
                 {
                     ParseFile.LoadObjects(parsedObjects, ref _works, ref _isFileLoaded);
                     Title = $"Работы студентов - {_currentFilePath}";
@@ -41,11 +69,14 @@ namespace Lab3
                 }
                 else
                 {
-                    MessageBox.Show(this, "Ошибка чтения файла", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Logger.Error("Ошибка чтения файла файла");
                     _currentFilePath = _perviousFilePath;
                 }
             }
-            else MessageBox.Show(this, "Файл не выбран", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            else
+            {
+                Logger.Info("Файл не выбран");
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -56,9 +87,14 @@ namespace Lab3
                 Title = $"Работы студентов - {_currentFilePath}";
                 _isFileLoaded = true;
             }
+
             if (!FileHandler.WriteFile(_currentFilePath, _works.ToList()))
             {
-                MessageBox.Show(this, "Ошибка записи файла", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                Logger.Error("Ошибка записи файла");
+            }
+            else
+            {
+                Logger.Info($"Файл сохранен: {_currentFilePath}");
             }
         }
 
@@ -69,12 +105,21 @@ namespace Lab3
             if (win.ShowDialog() == true)
             {
                 _works.Add(win.Result);
+                Logger.Info("Добавлена работа: " + win.Result.ToRawString());
             }
         }
-        
+
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            _works.Remove((StudentWork)WorksGrid.SelectedItem);
+            if (WorksGrid.SelectedItem is StudentWork work)
+            {
+                _works.Remove(work);
+                Logger.Info("Удалена работа: " + work.ToRawString());
+            }
+            else
+            {
+                Logger.Info("Попытка удаления без выбора");
+            }
         }
     }
 }

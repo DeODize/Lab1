@@ -18,16 +18,31 @@ namespace Lab3
     public partial class Filter : Window
     {
         private ObservableCollection<StudentWork> WorksForFilter { get; }
-        
+        public Action<ObservableCollection<StudentWork>> OnGrid; // подписка UI
         public Filter(ObservableCollection<StudentWork> works)
         {
             InitializeComponent();
-            WorksForFilter = works;
+            WorksForFilter = works ?? new ObservableCollection<StudentWork>();
         }
 
         private void Filter_Click(object sender, RoutedEventArgs e)
         {
-            ((MainWindow)Application.Current.MainWindow).WorksGrid.ItemsSource = ParseFile.Filter(WorksForFilter, FilterBox.Text);
+            // Получаем отфильтрованную коллекцию
+            var filtered = ParseFile.Filter(WorksForFilter, FilterBox.Text);
+
+            // Если нет подписчиков — ничего не делаем
+            if (OnGrid == null)
+                return;
+
+            // Вызываем делегат в потоке UI через Dispatcher, если требуется
+            if (Dispatcher.CheckAccess())
+            {
+                OnGrid(filtered);
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(new Action(() => OnGrid(filtered)));
+            }
         }
     }
 }

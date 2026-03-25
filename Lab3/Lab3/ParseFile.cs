@@ -41,7 +41,8 @@ namespace Lab3
                     StudentWork part = ParseLine(trimmed);
                     if (part != null)
                         fileWorks.Add(part);
-                    else return null;
+                    else
+                        try { Logger.Error($"Не удалось распарсить строку: '{trimmed}'"); } catch { }
                 }
                 return fileWorks;
             }
