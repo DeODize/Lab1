@@ -14,7 +14,7 @@ namespace Lab3
 {
     public partial class MainWindow : Window
     {
-        private System.Collections.ObjectModel.ObservableCollection<StudentWork> _works = new();
+        private ObservableCollection<StudentWork> _works = new();
         private string _currentFilePath;
         private string _perviousFilePath;
         private bool _isFileLoaded = false;
@@ -24,27 +24,12 @@ namespace Lab3
             InitializeComponent();
             WorksGrid.ItemsSource = _works;
             Logger.Init("log.txt", WriteLog);
-            //Filter filter = new Filter(_works);
-            //filter.OnGrid += Filter_OnGrid;
-            //filter.Show();
         }
-
-        private void Filter_OnGrid(ObservableCollection<StudentWork> filteredWorks)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                WorksGrid.ItemsSource = filteredWorks;
-            });
-        }
-
 
         private void WriteLog(string message)
         {
-            Dispatcher.Invoke(() =>
-            {
-                LogBox.AppendText(message + Environment.NewLine);
-                LogBox.ScrollToEnd();
-            });
+            LogBox.AppendText(message + Environment.NewLine);
+            LogBox.ScrollToEnd();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -52,7 +37,6 @@ namespace Lab3
             _currentFilePath = FileHandler.OpenDialog();
             if (_currentFilePath != null)
             {
-                Logger.Info($"Открыт файл: {_currentFilePath}");
                 var parsedStrings = FileHandler.ReadFile(_currentFilePath);
                 if (parsedStrings == null)
                 {
@@ -73,10 +57,6 @@ namespace Lab3
                     _currentFilePath = _perviousFilePath;
                 }
             }
-            else
-            {
-                Logger.Info("Файл не выбран");
-            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -92,10 +72,6 @@ namespace Lab3
             {
                 Logger.Error("Ошибка записи файла");
             }
-            else
-            {
-                Logger.Info($"Файл сохранен: {_currentFilePath}");
-            }
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -105,7 +81,6 @@ namespace Lab3
             if (win.ShowDialog() == true)
             {
                 _works.Add(win.Result);
-                Logger.Info("Добавлена работа: " + win.Result.ToRawString());
             }
         }
 
@@ -114,11 +89,10 @@ namespace Lab3
             if (WorksGrid.SelectedItem is StudentWork work)
             {
                 _works.Remove(work);
-                Logger.Info("Удалена работа: " + work.ToRawString());
             }
             else
             {
-                Logger.Info("Попытка удаления без выбора");
+                Logger.Error("Попытка удаления без выбора");
             }
         }
     }

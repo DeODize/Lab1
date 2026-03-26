@@ -10,7 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.1*" />
             <RowDefinition Height="0.75*" />
-            <RowDefinition Height="0.05*" />
+            <RowDefinition Height="0.06*" />
             <RowDefinition Height="0.25*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,8" Grid.Row="0">
@@ -26,7 +26,7 @@
                 <DataGridTextColumn Header="Дата" Binding="{Binding DateOfWork, StringFormat=yyyy-MM-dd}" Width="120" />
             </DataGrid.Columns>
         </DataGrid>
-        <Label Content="Logs:" Grid.Row="2" FontSize="12" />
+        <Label Content="Error logs:" Grid.Row="2" FontSize="12" />
         <TextBox x:Name="LogBox" Grid.Row="3" IsReadOnly="True"/>
     </Grid>
 </Window>

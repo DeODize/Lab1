@@ -20,11 +20,6 @@ namespace Lab3
             OnLog = logAction;
         }
 
-        public static void Info(string message)
-        {
-            Write("INFO", message);
-        }
-
         public static void Error(string message)
         {
             Write("ERROR", message);

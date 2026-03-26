@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Filter" Height="255" Width="745">
     <Grid Margin="0,0,10,9">
-        <Button Content="Выбрать" HorizontalAlignment="Left" Margin="420,49,0,0" VerticalAlignment="Top" Height="28" Width="175" Click="Filter_Click"/>
+        <Button Content="Выбрать" IsDefault="True" HorizontalAlignment="Left" Margin="420,49,0,0" VerticalAlignment="Top" Height="28" Width="175" Click="Filter_Click"/>
         <TextBox x:Name ="FilterBox" HorizontalAlignment="Left" Margin="90,49,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="278" Height="28" FontSize="16"/>
 
     </Grid>

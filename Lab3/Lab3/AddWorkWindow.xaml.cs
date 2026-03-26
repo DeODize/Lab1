@@ -32,11 +32,13 @@ namespace Lab3
             if (string.IsNullOrWhiteSpace(name))
             {
                 MessageBox.Show(this, "Имя не может быть пустым", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Logger.Error("Задано пустое имя");
                 return;
             }
             if (string.IsNullOrWhiteSpace(work))
             {
                 MessageBox.Show(this, "Название работы не может быть пустым", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Logger.Error("Задано пустое название работы");
                 return;
             }
             DateTime date = DateTime.Now;
@@ -45,6 +47,7 @@ namespace Lab3
                 if (!DateTime.TryParse(DateBox.Text.Trim(), out date))
                 {
                     MessageBox.Show(this, "Неверный формат даты", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    Logger.Error("Неверный формат даты");
                     return;
                 }
             }
