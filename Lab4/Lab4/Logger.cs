@@ -6,18 +6,21 @@ using System.Text;
 using System.Windows;
 using System.Threading.Tasks;
 
-namespace Lab3
+namespace Lab4
 {
     static public class Logger
     {
         private static string _filePath = "app.log";
 
-        public static Action<string> OnLog;
+        delegate void Message(string hehe);
+
+        //public static Message? mes;
+        public static Action<string> OnLog; // подписка UI
 
         public static void Init(string filePath, Action<string> logAction)
         {
             _filePath = filePath;
-            OnLog += logAction;
+            OnLog = logAction;
         }
 
         public static void Error(string message)
