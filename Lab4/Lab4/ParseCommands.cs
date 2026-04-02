@@ -14,20 +14,6 @@ namespace Lab4
         public Func<IEnumerable<StudentWork>> GetWorksFunc { get; set; }
         public Action<string> SaveWorks { get; set; }
 
-        private StudentWork? ParseStudentFromCSVString(string CSVString)
-        {
-            var data = CSVString.Substring(4);
-            var parts = data.Split(';');
-            if (parts.Length >= 3)
-            {
-                if (DateTime.TryParse(parts[2], out var date))
-                {
-                    var sw = new StudentWork(parts[0], parts[1], date);
-                    return sw;
-                }
-            }
-            return null;
-        }
         public void ProcessCommandFile(string?[] lines)
         {
             foreach (var line in lines)
@@ -36,25 +22,15 @@ namespace Lab4
                 if (string.IsNullOrWhiteSpace(trimmed)) continue;
                 if (trimmed.StartsWith("ADD ", StringComparison.OrdinalIgnoreCase))
                 {
-                    StudentWork student = ParseStudentFromCSVString(trimmed);
-                    if (student != null)
-                        AddWorkAction?.Invoke(student);
+                    AddStudentWorks(trimmed);
                 }
                 else if (trimmed.StartsWith("REMOVE ", StringComparison.OrdinalIgnoreCase))
                 {
-                    var filter = trimmed.Substring(7);
-                    if (!string.IsNullOrWhiteSpace(filter))
-                        RemoveStudentWorks(filter);
+                    RemoveStudentWorks(trimmed);
                 }
                 else if (trimmed.StartsWith("SAVE ", StringComparison.OrdinalIgnoreCase))
                 {
-                    var filePath = trimmed.Substring(5).Trim();
-                    if (string.IsNullOrWhiteSpace(filePath))
-                    {
-                        Logger.Error("SAVE: путь к файлу не указан");
-                        continue;
-                    }
-                    SaveWorks.Invoke(filePath);
+                    SaveStudentWorks(trimmed);
                 }
                 else 
                     Logger.Error($"Неизвестная команда: {line}");
@@ -63,6 +39,12 @@ namespace Lab4
 
         private void RemoveStudentWorks(string cond)
         {
+            var filter = cond.Substring(7);
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                return;
+            }
+
             string[] conditions = cond.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
             var allworks = GetWorksFunc?.Invoke() ?? Enumerable.Empty<StudentWork>();
             if (conditions.Length == 2)
@@ -93,6 +75,36 @@ namespace Lab4
                     }
                 }
             }
+        }
+        private StudentWork? ParseStudentFromCSVString(string CSVString)
+        {
+            var data = CSVString.Substring(4);
+            var parts = data.Split(';');
+            if (parts.Length >= 3)
+            {
+                if (DateTime.TryParse(parts[2], out var date))
+                {
+                    var sw = new StudentWork(parts[0], parts[1], date);
+                    return sw;
+                }
+            }
+            return null;
+        }
+        private void AddStudentWorks(string condition)
+        {
+            StudentWork student = ParseStudentFromCSVString(condition);
+            if (student != null)
+                AddWorkAction?.Invoke(student);
+        }
+        private void SaveStudentWorks(string condition)
+        {
+            var filePath = condition.Substring(5).Trim();
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                Logger.Error("SAVE: путь к файлу не указан");
+                return;
+            }
+            SaveWorks.Invoke(filePath);
         }
     }
 }
