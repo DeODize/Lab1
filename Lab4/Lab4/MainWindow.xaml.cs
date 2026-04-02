@@ -131,7 +131,9 @@ namespace Lab4
                 RemoveWorksAction = Studworks =>
                 {
                     foreach (var w in Studworks)
+                    {
                         _works.Remove(w);
+                    } 
                 },
                 SaveWorks = spath  =>
                 {
